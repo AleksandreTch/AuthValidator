@@ -1,5 +1,10 @@
+// Native React Imports
 import React, { Fragment, useState, useEffect } from "react";
 
+// Context (State Managment) Imports
+import AuthContext from "./store/auth-context";
+
+// Custom Component Imports
 import Login from "./components/Login/Login";
 import Home from "./components/Home/Home";
 import MainHeader from "./components/MainHeader/MainHeader";
@@ -12,7 +17,7 @@ function App() {
 
     if (storedUserLoggedInInformation === "1") {
       setIsLoggedIn(true);
-    } 
+    }
   }, []);
 
   const loginHandler = (email, password) => {
@@ -23,17 +28,19 @@ function App() {
   };
 
   const logoutHandler = () => {
-    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem("isLoggedIn");
     setIsLoggedIn(false);
   };
 
   return (
     <Fragment>
-      <MainHeader isAuthenticated={isLoggedIn} onLogout={logoutHandler} />
-      <main>
-        {!isLoggedIn && <Login onLogin={loginHandler} />}
-        {isLoggedIn && <Home onLogout={logoutHandler} />}
-      </main>
+      <AuthContext>
+        <MainHeader isAuthenticated={isLoggedIn} onLogout={logoutHandler} />
+        <main>
+          {!isLoggedIn && <Login onLogin={loginHandler} />}
+          {isLoggedIn && <Home onLogout={logoutHandler} />}
+        </main>
+      </AuthContext>
     </Fragment>
   );
 }
