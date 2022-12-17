@@ -5,65 +5,72 @@ import classes from './Login.module.css';
 import Button from '../UI/Button/Button';
 
 const emailReducer = (state, action) => {
-  
-  if(action.type === 'USER_INPUT') {
-    return {value: action.val, isValid: action.val.includes('@')};  
+  if (action.type === 'USER_INPUT') {
+    return { value: action.val, isValid: action.val.includes('@') };
   }
-
-  if(action.type === 'INPUT_BLUR'){
-    return {value: state.value, isValid: state.value.includes('@')};  
+  if (action.type === 'INPUT_BLUR') {
+    return { value: state.value, isValid: state.value.includes('@') };
   }
-
-  return {value: '', isValid: false};
+  return { value: '', isValid: false };
 };
 
-const passwordReducer= (state, action) => {
-  if(action.type === 'USER_INPUT') {
-    return {value: action.val, isValid: action.val.trim().length > 6};  
+const passwordReducer = (state, action) => {
+  if (action.type === 'USER_INPUT') {
+    return { value: action.val, isValid: action.val.trim().length > 6 };
   }
-
-  if(action.type === 'INPUT_BLUR'){
-    return {value: state.value, isValid: state.value.trim().length > 6};  
+  if (action.type === 'INPUT_BLUR') {
+    return { value: state.value, isValid: state.value.trim().length > 6 };
   }
-
-  return {value: '', isValid: false};
-}
+  return { value: '', isValid: false };
+};
 
 const Login = (props) => {
+  
   const [formIsValid, setFormIsValid] = useState(false);
 
   const [emailState, dispatchEmail] = useReducer(emailReducer, {
-    value: '', 
+    value: '',
     isValid: null,
   });
-  
   const [passwordState, dispatchPassword] = useReducer(passwordReducer, {
     value: '',
     isValid: null,
   });
 
-  const emailChangeHandler = (event) => {
-    dispatchEmail({type: 'USER_INPUT', val: event.target.value});
+  useEffect(() => {
 
-    setFormIsValid(
-      event.target.value.includes('@') && passwordState.isValid
-    ); 
+    return () => {};
+  }, []);
+
+  const { isValid: emailIsValid } = emailState;
+  const { isValid: passwordIsValid } = passwordState;
+
+  useEffect(() => {
+    const identifier = setTimeout(() => {
+      
+      setFormIsValid(emailIsValid && passwordIsValid);
+    }, 500);
+
+    return () => {clearTimeout(identifier);
+    };
+  }, [emailIsValid, passwordIsValid]);
+
+  const emailChangeHandler = (event) => {
+    dispatchEmail({ type: 'USER_INPUT', val: event.target.value });
+
+
   };
 
   const passwordChangeHandler = (event) => {
-    dispatchPassword({type: 'USER_INPUT', val: event.target.value})
-
-    setFormIsValid(
-      emailState.isValid && passwordState.isValid
-      );
+    dispatchPassword({ type: 'USER_INPUT', val: event.target.value });
   };
 
   const validateEmailHandler = () => {
-    dispatchEmail({type: 'INPUT_BLUR'});
+    dispatchEmail({ type: 'INPUT_BLUR' });
   };
 
   const validatePasswordHandler = () => {
-    dispatchPassword({type: 'INPUT_BLUR'})
+    dispatchPassword({ type: 'INPUT_BLUR' });
   };
 
   const submitHandler = (event) => {
